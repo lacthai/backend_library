@@ -28,16 +28,39 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// get users;
+// get a user
 
-router.get("/", async (req, res) => {
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const users = await User.find({});
-    res.json(users);
-  } catch (e) {
-    res.status(400).send(e.message);
+    const user = await User.findOne({ _id: id });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.log('Error retrieving user:', error);
+    res.status(500).json({ error: 'Failed to retrieve user' });
   }
 });
+
+// get all user
+router.get('/', async (req, res) => {
+
+  try {
+    let users = await User.find();
+    users = users.map((user)=>{
+      const {password, ...otherDetails} = user._doc
+      return otherDetails
+    })
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+})
 
 // get user orders
 
@@ -66,7 +89,18 @@ router.post("/:id/updateNotifications", async (req, res) => {
   }
 });
 //update profile
+router.patch("/updatestudent", async (req, res) => {
+  try {
+      const {name, photoURL} = req.body
+      await Users.findOneAndUpdate({_id: req.user.id}, {
+          name, photoURL
+      })
 
+      res.json({msg: "Update Success!"})
+  } catch (err) {
+      return res.status(500).json({msg: err.message})
+  }
+});
 
 
 

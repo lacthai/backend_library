@@ -27,7 +27,7 @@ const UserSchema = mongoose.Schema({
   },
 
   photoURL: { 
-    type: String, 
+    type: Array, 
     default: 'https://e7.pngegg.com/pngimages/705/224/png-clipart-user-computer-icons-avatar-miscellaneous-heroes.png' ,
     required: true
   },
